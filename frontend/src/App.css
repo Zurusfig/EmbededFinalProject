@@ -1,17 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
 .App {
   min-height: 100vh;
   background-color: #FFF8E7; /* Light cream/pale yellow background */
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "Nunito", -apple-system, sans-serif;
+  font-weight: bold;
 }
 
 /* Header Section */
 .header-container {
-  background-color: #FFE4E1; /* Light pink */
-  border: 2px solid #8B4513; /* Brown outline */
-  border-radius: 50px; /* Pill-shaped */
+  background-color: #FFEAEC;
+  border: 5px solid #8B4513; /* Brown outline */
+  border-radius: 100px; /* Pill-shaped */
   padding: 20px 40px;
   margin-bottom: 30px;
   text-align: center;
@@ -20,7 +21,7 @@
 .main-title {
   color: #654321; /* Dark brown */
   font-size: 2.5rem;
-  font-weight: bold;
+  font-weight: 900;
   margin: 0;
 }
 
@@ -53,23 +54,28 @@
 
 /* Card Base Styles */
 .card {
-  border: 2px solid #8B4513; /* Brown outline */
-  border-radius: 20px; /* Rounded corners */
+  border: 5px solid #8B4513; /* Brown outline */
+  border-radius: 50px; /* Rounded corners */
   padding: 20px;
   background-color: #fff;
 }
 
 .card-header {
   color: #654321; /* Dark brown */
-  font-size: 1.2rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin: 0 0 15px 0;
-  text-align: left;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  height: 20%;
+  width: 100%;
 }
 
 /* Food Bowl Card */
 .food-bowl-card {
-  background-color: #FFE4E1; /* Light pink */
+  background-color: #FFB3BA;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -82,6 +88,7 @@
   flex-direction: column;
   align-items: center;
   gap: 5px;
+  height: 80%;
 }
 
 .amount-value {
@@ -99,29 +106,39 @@
 .feeding-log-card {
   background-color: #E0F7E0; /* Light green */
   min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .feeding-log-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+  overflow: auto;
 }
 
 .feeding-log-entry {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  align-items: center;
+  justify-content: center;
 }
 
 .log-type {
   color: #654321; /* Dark brown */
-  font-weight: bold;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 1.2rem;
 }
 
 .log-time {
   color: #654321; /* Dark brown */
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 /* Right Column */
@@ -144,18 +161,23 @@
 
 .connection-text {
   color: #654321; /* Dark brown */
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: bold;
 }
 
 .connection-indicator {
-  width: 12px;
-  height: 12px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-  background-color: #28a745; /* Green */
+  border: 5px solid #8B4513;
+  background-color: #E0F7E0; /* Green */
 }
 
 .connection-indicator.disconnected {
-  background-color: #dc3545; /* Red */
+  background-color: #FFB3BA; /* Red */
 }
 
 /* Water Level Card */
@@ -169,7 +191,7 @@
 }
 
 .water-droplet {
-  font-size: 3rem;
+  font-size: 3rem;  
   margin: 10px 0;
 }
 
@@ -184,8 +206,9 @@
 .feed-now-button {
   background-color: #FFFACD; /* Light yellow */
   border-radius: 50px; /* Pill-shaped */
-  border: 2px solid #8B4513; /* Brown outline */
+  border: 5px solid #8B4513; /* Brown outline */
   color: #654321; /* Dark brown */
+  font-family: "Nunito", -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: bold;
   font-size: 1.5rem;
   padding: 20px 40px;
@@ -195,7 +218,7 @@
 }
 
 .feed-now-button:hover {
-  transform: translateY(-2px);
+  transform: scale(1.02);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -205,7 +228,7 @@
 
 /* Refill Level Card */
 .refill-level-card {
-  background-color: #E6E6FA; /* Light purple */
+  background-color: #FCD6FF;
   border-radius: 50px; /* Pill-shaped */
   display: flex;
   align-items: center;
@@ -217,15 +240,16 @@
 .refill-text {
   color: #654321; /* Dark brown */
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
 
 .refill-progress-bar {
   flex: 1;
   max-width: 300px;
   height: 20px;
-  background-color: #FFE4E1; /* Light pink */
-  border-radius: 10px;
+  background-color: #ffffff; /* Light pink */
+  border: 5px solid #8B4513;
+  border-radius: 50px; /* Fully rounded pill shape */
   margin-left: 20px;
   overflow: hidden;
 }
@@ -237,25 +261,47 @@
 }
 
 .refill-progress-fill.refill-red {
-  background-color: #dc3545; /* Red */
+  background-color: #FFB3BA; /* Food Bowl pink - low level */
 }
 
 .refill-progress-fill.refill-orange {
-  background-color: #ff8c00; /* Orange */
+  background-color: #FFE4B5; /* Connection Status orange - medium-low level */
 }
 
 .refill-progress-fill.refill-yellow {
-  background-color: #ffc107; /* Yellow */
+  background-color: #FFFACD; /* Feed Now Button yellow - medium level */
 }
 
 .refill-progress-fill.refill-green {
-  background-color: #28a745; /* Green */
+  background-color: #E0F7E0; /* Feeding Log green - good level */
 }
 
 /* Responsive Design */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .top-row {
     grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .food-bowl-card {
+    order: 2;
+  }
+  
+  .feeding-log-card {
+    order: 3;
+  }
+  
+  .right-column {
+    order: 1;
+  }
+  
+  .connection-status-card {
+    order: 1;
+  }
+  
+  .water-level-card {
+    order: 2;
   }
   
   .bottom-row {
@@ -266,3 +312,4 @@
     font-size: 2rem;
   }
 }
+

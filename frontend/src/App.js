@@ -1,4 +1,6 @@
 import './App.css';
+import { Fish } from 'lucide-react';
+import { Droplet } from 'lucide-react';
 
 function App() {
   // Static data - will be replaced with Firebase data later
@@ -45,6 +47,9 @@ function App() {
           <div className="card food-bowl-card">
             <h2 className="card-header">FOOD BOWL</h2>
             <div className="food-amount">
+              <div className="food-amount-icon">
+                <Fish size={100} color="#654321" strokeWidth={5} absoluteStrokeWidth />
+              </div>
               <span className="amount-value">{foodBowlAmount}</span>
               <span className="amount-unit">grams</span>
             </div>
@@ -74,7 +79,9 @@ function App() {
             {/* Water Level */}
             <div className="card water-level-card">
               <h2 className="card-header">WATER LEVEL</h2>
-              <div className="water-droplet">💧</div>
+              <div className="water-droplet">
+                <Droplet size={100} color="#654321" strokeWidth={5} absoluteStrokeWidth />
+              </div>
               <div className="water-status">{waterLevel}</div>
             </div>
           </div>
