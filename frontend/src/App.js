@@ -1,6 +1,8 @@
 import './App.css';
 import { Fish } from 'lucide-react';
 import { Droplet } from 'lucide-react';
+import { Cat } from 'lucide-react';
+import { PawPrint } from 'lucide-react';
 
 function App() {
   // Static data - will be replaced with Firebase data later
@@ -35,8 +37,16 @@ function App() {
     <div className="App">
       {/* Header Section */}
       <div className="header-container">
-        <h1 className="main-title">Cat Ultimate Helper</h1>
-        <p className="subtitle">C.U.H Automatic Feeder</p>
+        <div className="header-icon">
+          <Cat size={100} color="#654321" strokeWidth={5} absoluteStrokeWidth />
+        </div>
+        <div className="header-text">
+          <h1 className="main-title">Cat Ultimate Helper</h1>
+          <p className="subtitle">C.U.H Automatic Feeder</p>
+        </div>
+        <div className="header-icon">
+          <PawPrint size={100} color="#654321" strokeWidth={5} absoluteStrokeWidth />
+        </div>
       </div>
 
       {/* Main Content */}
@@ -102,6 +112,30 @@ function App() {
                 className={`refill-progress-fill refill-${refillColorStage}`}
                 style={{ width: `${refillLevel}%` }}
               ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="footer-container">
+        <div className="footer-content">
+          <h3 className="footer-title">Members</h3>
+          <div className="members-list">
+            <div className="member-item">
+              <span className="member-name">Parkorn Wattanasukchai</span>
+              <span className="member-id">6631340221</span>
+            </div>
+            <div className="member-item">
+              <span className="member-name">Weeraphat Kawthaisong</span>
+              <span className="member-id">6631348321</span>
+            </div>
+            <div className="member-item">
+              <span className="member-name">Sukon Lapprasert</span>
+              <span className="member-id">6631351121</span>
+            </div>
+            <div className="member-item">
+              <span className="member-name">Ittichet Thongsang</span>
+              <span className="member-id">6631363721</span>
             </div>
           </div>
         </div>
