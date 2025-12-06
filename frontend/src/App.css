@@ -1,38 +1,449 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
+  background-color: #FFF8E7; /* Light cream/pale yellow background */
+  padding: 20px;
+  font-family: "Nunito", -apple-system, sans-serif;
+  font-weight: bold;
+}
+
+/* Header Section */
+.header-container {
+  background-color: #FFEAEC;
+  border: 5px solid #8B4513; /* Brown outline */
+  border-radius: 100px; /* Pill-shaped */
+  padding: 20px 40px;
+  margin-bottom: 30px;
+  display: flex;
+  text-align: center;
+  gap: 20px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.1s ease;
+}
+
+.header-icon svg {
+  width: 100px;
+  height: 100px;
+  transition: width 0.1s ease, height 0.1s ease;
+}
+
+.header-text {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-size: 1.5rem;
+  text-wrap: nowrap;
 }
 
-.App-link {
-  color: #61dafb;
+.main-title {
+  color: #654321; /* Dark brown */
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin: 0;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.subtitle {
+  color: #654321; /* Dark brown */
+  font-size: 1.2rem;
+  margin: 5px 0 0 0;
+}
+
+/* Main Content */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Top Row */
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+/* Bottom Row */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Card Base Styles */
+.card {
+  border: 5px solid #8B4513; /* Brown outline */
+  border-radius: 50px; /* Rounded corners */
+  padding: 20px;
+  background-color: #fff;
+}
+
+.card-header {
+  color: #654321; /* Dark brown */
+  font-size: 2rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  height: 20%;
+  width: 100%;
+}
+
+/* Food Bowl Card */
+.food-bowl-card {
+  background-color: #FFB3BA;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.food-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  height: 80%;
+}
+
+.amount-value {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #654321; /* Dark brown */
+}
+
+.amount-unit {
+  font-size: 1.5rem;
+  color: #654321; /* Dark brown */
+}
+
+/* Feeding Log Card */
+.feeding-log-card {
+  background-color: #E0F7E0; /* Light green */
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.feeding-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+  overflow: auto;
+}
+
+.feeding-log-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  justify-content: center;
+}
+
+.log-type {
+  color: #654321; /* Dark brown */
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.log-time {
+  color: #654321; /* Dark brown */
+  font-size: 1rem;
+}
+
+/* Right Column */
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Connection Status Card */
+.connection-status-card {
+  background-color: #FFE4B5; /* Light orange */
+  border-radius: 50px; /* Pill-shaped */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 25px;
+  min-height: auto;
+}
+
+.connection-text {
+  color: #654321; /* Dark brown */
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.connection-indicator {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 5px solid #8B4513;
+  background-color: #E0F7E0; /* Green */
+}
+
+.connection-indicator.disconnected {
+  background-color: #FFB3BA; /* Red */
+}
+
+/* Water Level Card */
+.water-level-card {
+  background-color: #E0F0FF; /* Light blue */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.water-droplet {
+  font-size: 3rem;  
+  margin: 10px 0;
+}
+
+.water-status {
+  color: #654321; /* Dark brown */
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 10px;
+}
+
+/* Feed Now Button */
+.feed-now-button {
+  background-color: #FFFACD; /* Light yellow */
+  border-radius: 50px; /* Pill-shaped */
+  border: 5px solid #8B4513; /* Brown outline */
+  color: #654321; /* Dark brown */
+  font-family: "Nunito", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: bold;
+  font-size: 1.5rem;
+  padding: 20px 40px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  min-height: auto;
+}
+
+.feed-now-button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.feed-now-button:active {
+  transform: translateY(0);
+}
+
+/* Refill Level Card */
+.refill-level-card {
+  background-color: #FCD6FF;
+  border-radius: 50px; /* Pill-shaped */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  min-height: auto;
+}
+
+.refill-text {
+  color: #654321; /* Dark brown */
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.refill-progress-bar {
+  flex: 1;
+  max-width: 300px;
+  height: 20px;
+  background-color: #ffffff; /* Light pink */
+  border: 5px solid #8B4513;
+  border-radius: 50px; /* Fully rounded pill shape */
+  margin-left: 20px;
+  overflow: hidden;
+}
+
+.refill-progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.refill-progress-fill.refill-red {
+  background-color: #FFB3BA; /* Food Bowl pink - low level */
+}
+
+.refill-progress-fill.refill-orange {
+  background-color: #FFE4B5; /* Connection Status orange - medium-low level */
+}
+
+.refill-progress-fill.refill-yellow {
+  background-color: #FFFACD; /* Feed Now Button yellow - medium level */
+}
+
+.refill-progress-fill.refill-green {
+  background-color: #E0F7E0; /* Feeding Log green - good level */
+}
+
+.footer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px;
+  margin-top: 20px;
+}
+
+.footer-content {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.footer-title {
+  color: #654321; /* Dark brown */
+  font-size: 1.5rem;
+  font-weight: 900;
+  margin: 0;
+  text-align: center;
+}
+
+.members-list {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.member-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-name {
+  color: #654321; /* Dark brown */
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.member-id {
+  color: #654321; /* Dark brown */
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .top-row {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .food-bowl-card {
+    order: 2;
+  }
+  
+  .feeding-log-card {
+    order: 3;
+  }
+  
+  .right-column {
+    order: 1;
+  }
+  
+  .connection-status-card {
+    order: 1;
+  }
+  
+  .water-level-card {
+    order: 2;
+  }
+  
+  .bottom-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .main-title {
+    font-size: 2rem;
+  }
+  
+  .header-icon svg {
+    width: 70px;
+    height: 70px;
+  }
+  
+  .header-container {
+    padding: 15px 30px;
+    gap: 15px;
+  }
+
+  .header-text {
+    font-size: 0.8rem;
+    text-wrap: nowrap;
+  }
+  
+  .footer-title {
+    font-size: 1.3rem;
+  }
+  
+  .members-list {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .member-item {
+    flex-direction: column;
+    gap: 4px;
   }
 }
+
+@media (max-width: 600px) {
+  .header-icon svg {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .header-container {
+    padding: 12px 20px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 400px) {
+  .header-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .header-container {
+    padding: 10px 15px;
+    gap: 10px;
+  }
+}
+
