@@ -14,6 +14,8 @@ function App() {
   const [refillLevel, setRefillLevel] = useState(0); // percentage
   const [nextSlot, setNextSlot] = useState(0);
   const [feedingLog, setFeedingLog] = useState([]);
+  const [isFeeding, setIsFeeding] = useState(false);
+  const [feedButtonText, setFeedButtonText] = useState('FEED NOW');
 
   // Fetch and sort feeding logs based on nextSlot
   // nextSlot is the next slot to write to, so most recent is nextSlot - 1
@@ -101,8 +103,22 @@ function App() {
   }, []);
 
   const handleFeedNow = () => {
-    // Will be implemented with Firebase later
-    console.log("Feed Now clicked");
+    if (isFeeding) return; // Prevent multiple clicks
+    
+    // Set button to feeding state
+    setIsFeeding(true);
+    setFeedButtonText('FEEDING...');
+    
+    // Write to Firebase
+    firebase.database().ref('manual/value').set(true);
+    
+    // Reset after 5 seconds
+    setTimeout(() => {
+      setIsFeeding(false);
+      setFeedButtonText('FEED NOW');
+      // Optionally set Firebase back to false
+      firebase.database().ref('manual/value').set(false);
+    }, 5000);
   };
 
   // Calculate inverse refill level (100 - refill_left)
@@ -207,9 +223,13 @@ function App() {
         {/* Bottom Row */}
         <div className="bottom-row">
           {/* Feed Now Button */}
-          {/* <button className="card feed-now-button" onClick={handleFeedNow}>
-            FEED NOW
-          </button> */}
+          <button 
+            className={`card feed-now-button ${isFeeding ? 'feeding' : ''}`}
+            onClick={handleFeedNow}
+            disabled={isFeeding}
+          >
+            {feedButtonText}
+          </button>
 
           {/* Refill Level Indicator */}
           <div className="card refill-level-card">

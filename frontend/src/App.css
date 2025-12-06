@@ -262,6 +262,19 @@
   transform: translateY(0);
 }
 
+.feed-now-button:disabled,
+.feed-now-button.feeding {
+  background-color: #CCCCCC; /* Gray */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.feed-now-button:disabled:hover,
+.feed-now-button.feeding:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 /* Refill Level Card */
 .refill-level-card {
   background-color: #FCD6FF;
