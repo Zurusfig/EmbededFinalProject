@@ -93,6 +93,8 @@ float knownOriginal = 1;
 float knownHX711 = 1;
 int weight;
 int percent_level;
+uint8_t rx_byte;
+uint8_t feed_trigger;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -242,6 +244,24 @@ int loop_adc_read(void) {
     // The total delay here is already (5ms * 10 samples) + 100ms = 150ms.
     // HAL_Delay(100); // Removing the extra delay as the loop already has a delay.
 }
+
+void Run_Manual_Feed(void){
+  if(isOpen == 0){
+	  Servo_Write(SERVO_OPEN_ANGLE);
+	  openTime = HAL_GetTick();
+	  char log[50];
+	  int len = snprintf(log, sizeof(log),"m\r\n");
+	  HAL_UART_Transmit(&huart2, (uint8_t*)log, (uint16_t)len, 1000);
+	  HAL_UART_Transmit(&huart1, (uint8_t*)log, (uint16_t)len, 1000);
+	  isOpen = 1;
+  }
+  else{
+	  if(HAL_GetTick() - openTime > 200){
+		  Servo_Write(SERVO_CLOSE_ANGLE);
+		  isOpen = 0;
+	  }
+  }
+}
 /* USER CODE END 0 */
 
 /**
@@ -284,11 +304,13 @@ int main(void)
   Servo_Write(SERVO_CLOSE_ANGLE);
 
   HAL_GPIO_WritePin(SCK_PORT, SCK_PIN, GPIO_PIN_SET);
-	HAL_Delay(10);
-	HAL_GPIO_WritePin(SCK_PORT, SCK_PIN, GPIO_PIN_RESET);
-	HAL_Delay(10);
+  HAL_Delay(10);
+  HAL_GPIO_WritePin(SCK_PORT, SCK_PIN, GPIO_PIN_RESET);
+  HAL_Delay(10);
 
-	calibrate_tare();
+  calibrate_tare();
+  HAL_UART_Receive_IT(&huart1,&rx_byte,1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -339,10 +361,10 @@ int main(void)
 		  if(isOpen == 0){
 			  Servo_Write(SERVO_OPEN_ANGLE);
 			  openTime = HAL_GetTick();
-			  char log = 'm';
-			  int len = 10;
-			  HAL_UART_Transmit(&huart2, (uint8_t*)&log, (uint16_t)len, 1000);
-			  HAL_UART_Transmit(&huart1, (uint8_t*)&log, (uint16_t)len, 1000);
+			  char log[50];
+			  int len = snprintf(log, sizeof(log),"a\r\n");
+			  HAL_UART_Transmit(&huart2, (uint8_t*)log, (uint16_t)len, 1000);
+			  HAL_UART_Transmit(&huart1, (uint8_t*)log, (uint16_t)len, 1000);
 			  isOpen = 1;
 		  }
 		  else{
@@ -368,6 +390,10 @@ int main(void)
 
 	  HAL_UART_Transmit(&huart2, (uint8_t*)combined_buffer, (uint16_t)len, 1000);
 	  HAL_UART_Transmit(&huart1, (uint8_t*)combined_buffer, (uint16_t)len, 1000);
+	  if (feed_trigger == 1) {
+		  Run_Manual_Feed(); // Call your function
+		  feed_trigger = 0;  // Reset flag
+	  }
 //	  char test = 'T';
 //	  int len = 10;
 //	  HAL_UART_Transmit(&huart2, (uint8_t*)&test, (uint16_t)len, 1000);
@@ -701,7 +727,19 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+	void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+	{
+	  if (huart->Instance == USART1) // Check if it's the ESP32 UART
+	  {
+		// Check if the received character is 'f'
+		if (rx_byte == 'f') {
+			feed_trigger = 1; // Set the flag, don't run motor here (keep interrupts short!)
+		}
 
+		// Restart the listening for the next byte
+		HAL_UART_Receive_IT(&huart1, &rx_byte, 1);
+	  }
+	}
 /* USER CODE END 4 */
 
 /**
