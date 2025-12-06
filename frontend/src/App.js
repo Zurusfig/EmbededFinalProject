@@ -39,17 +39,14 @@ function App() {
     }
     
     Promise.all(promises).then(() => {
-      // Sort by slot index in reverse order (most recent first)
-      // Most recent slot is nextSlot - 1 (wrapping around)
-      const sortedSlots = [];
-      for (let i = 0; i < 4; i++) {
-        // Start from nextSlot - 1 (most recent) and go backwards
-        const slotIndex = (nextSlotValue - 1 - i + 4) % 4;
-        const slotData = slots.find(s => s.slotIndex === slotIndex);
-        if (slotData) {
-          sortedSlots.push(slotData);
-        }
-      }
+      // Sort by timestamp in descending order (newest first)
+      // Parse timestamp strings "YYYY-MM-DD HH:MM:SS" to Date objects for comparison
+      const sortedSlots = slots.sort((a, b) => {
+        const dateA = new Date(a.timestamp.replace(' ', 'T'));
+        const dateB = new Date(b.timestamp.replace(' ', 'T'));
+        // Sort descending (newest first) - newest slot on top, others pushed down
+        return dateB - dateA;
+      });
       setFeedingLog(sortedSlots);
     });
   };
