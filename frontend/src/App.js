@@ -3,35 +3,130 @@ import { Fish } from 'lucide-react';
 import { Droplet } from 'lucide-react';
 import { Cat } from 'lucide-react';
 import { PawPrint } from 'lucide-react';
+import firebase from './firebase';
+import { useState, useEffect } from 'react';
 
 function App() {
   // Static data - will be replaced with Firebase data later
-  const foodBowlAmount = 200; // grams
+  const [foodBowlAmount, setFoodBowlAmount] = useState(0); // grams
   const isConnected = true;
-  const waterLevel = "EMPTY!!";
-  const refillLevel = 15; // percentage
-  
-  const feedingLog = [
-    { type: "Manual Feed", time: "2:30pm", date: "10/12/25" },
-    { type: "Auto Feed", time: "5:30am", date: "10/12/25" },
-    { type: "Auto Feed", time: "0:00am", date: "10/12/25" },
-    { type: "Auto Feed", time: "9:30pm", date: "9/12/25" },
-  ];
+  const [waterLevel, setWaterLevel] = useState(0);
+  const [refillLevel, setRefillLevel] = useState(0); // percentage
+  const [nextSlot, setNextSlot] = useState(0);
+  const [feedingLog, setFeedingLog] = useState([]);
+
+  // Fetch and sort feeding logs based on nextSlot
+  // nextSlot is the next slot to write to, so most recent is nextSlot - 1
+  const fetchAndSortSlots = (nextSlotValue) => {
+    const slots = [];
+    const promises = [];
+    
+    for (let i = 0; i < 4; i++) {
+      promises.push(
+        firebase.database().ref(`logs/slot_${i}`).once('value').then((snapshot) => {
+          const data = snapshot.val();
+          if (data && data.timestamp) {
+            slots.push({
+              type: data.type === 'auto' ? 'Auto Feed' : 'Manual Feed',
+              timestamp: data.timestamp,
+              slotIndex: i
+            });
+          }
+        })
+      );
+    }
+    
+    Promise.all(promises).then(() => {
+      // Sort by slot index in reverse order (most recent first)
+      // Most recent slot is nextSlot - 1 (wrapping around)
+      const sortedSlots = [];
+      for (let i = 0; i < 4; i++) {
+        // Start from nextSlot - 1 (most recent) and go backwards
+        const slotIndex = (nextSlotValue - 1 - i + 4) % 4;
+        const slotData = slots.find(s => s.slotIndex === slotIndex);
+        if (slotData) {
+          sortedSlots.push(slotData);
+        }
+      }
+      setFeedingLog(sortedSlots);
+    });
+  };
+
+  useEffect(() => {
+    const foodBowlRef = firebase.database().ref('data/weight');
+    foodBowlRef.on('value', (snapshot) => {
+      setFoodBowlAmount(snapshot.val());
+    });
+
+    const waterLevelRef = firebase.database().ref('data/water_level');
+    waterLevelRef.on('value', (snapshot) => {
+      setWaterLevel(snapshot.val());
+    });
+
+    const refillLevelRef = firebase.database().ref('data/refill_left');
+    refillLevelRef.on('value', (snapshot) => {
+      setRefillLevel(snapshot.val());
+    });
+
+    // Fetch nextSlot and update logs when it changes
+    const nextSlotRef = firebase.database().ref('logs/logs_config/nextSlot');
+    nextSlotRef.on('value', (snapshot) => {
+      const newNextSlot = snapshot.val() || 0;
+      setNextSlot(newNextSlot);
+      fetchAndSortSlots(newNextSlot);
+    });
+
+    // Listen for changes in all slots
+    const slotRefs = [];
+    for (let i = 0; i < 4; i++) {
+      const slotRef = firebase.database().ref(`logs/slot_${i}`);
+      slotRef.on('value', () => {
+        // Re-fetch when any slot changes
+        firebase.database().ref('logs/logs_config/nextSlot').once('value').then((snapshot) => {
+          const slot = snapshot.val() || 0;
+          fetchAndSortSlots(slot);
+        });
+      });
+      slotRefs.push(slotRef);
+    }
+
+    // Cleanup listeners
+    return () => {
+      foodBowlRef.off();
+      waterLevelRef.off();
+      refillLevelRef.off();
+      nextSlotRef.off();
+      slotRefs.forEach(ref => ref.off());
+    };
+  }, []);
 
   const handleFeedNow = () => {
     // Will be implemented with Firebase later
     console.log("Feed Now clicked");
   };
 
-  // Determine refill level color stage
-  const getRefillColorStage = (level) => {
-    if (level <= 25) return 'red';
-    if (level <= 50) return 'orange';
-    if (level <= 75) return 'yellow';
+  // Calculate inverse refill level (100 - refill_left)
+  const inverseRefillLevel = 100 - refillLevel;
+
+  // Determine refill level color stage based on inverse (low remaining = red, high remaining = green)
+  const getRefillColorStage = (inverseLevel) => {
+    if (inverseLevel <= 25) return 'red';
+    if (inverseLevel <= 50) return 'orange';
+    if (inverseLevel <= 75) return 'yellow';
     return 'green';
   };
 
-  const refillColorStage = getRefillColorStage(refillLevel);
+  // Determine water level status
+  const getWaterLevelStatus = (level) => {
+    if (level === 0) return 'EMPTY';
+    if (level < 25) return 'LOW';
+    if (level < 50) return 'OKAY';
+    if (level < 75) return 'GOOD';
+    return 'FULL';
+  };
+
+  const refillColorStage = getRefillColorStage(inverseRefillLevel);
+  const waterLevelStatus = getWaterLevelStatus(waterLevel);
 
   return (
     <div className="App">
@@ -69,30 +164,38 @@ function App() {
           <div className="card feeding-log-card">
             <h2 className="card-header">FEEDING LOG</h2>
             <div className="feeding-log-list">
-              {feedingLog.map((entry, index) => (
-                <div key={index} className="feeding-log-entry">
-                  <div className="log-type">{entry.type}</div>
-                  <div className="log-time">{entry.time} {entry.date}</div>
+              {feedingLog.length === 0 ? (
+                <div className="feeding-log-entry">
+                  <div className="log-type">NO LOGS YET</div>
                 </div>
-              ))}
+              ) : (
+                feedingLog.map((entry, index) => (
+                  <div key={index} className="feeding-log-entry">
+                    <div className="log-type">{entry.type}</div>
+                    <div className="log-time">{entry.timestamp}</div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
           {/* Connection Status and Water Level */}
           <div className="right-column">
             {/* Connection Status */}
-            <div className="card connection-status-card">
+            {/* <div className="card connection-status-card">
               <span className="connection-text">Connected</span>
               <span className={`connection-indicator ${isConnected ? 'connected' : 'disconnected'}`}></span>
-            </div>
+            </div> */}
 
             {/* Water Level */}
             <div className="card water-level-card">
               <h2 className="card-header">WATER LEVEL</h2>
-              <div className="water-droplet">
-                <Droplet size={100} color="#654321" strokeWidth={5} absoluteStrokeWidth />
+              <div className="water-indicator">
+                <div className="water-droplet">
+                  <Droplet size={100} color="#654321" strokeWidth={5} absoluteStrokeWidth />
+                </div>
+                <div className="water-status">{waterLevelStatus}</div>
               </div>
-              <div className="water-status">{waterLevel}</div>
             </div>
           </div>
         </div>
@@ -100,9 +203,9 @@ function App() {
         {/* Bottom Row */}
         <div className="bottom-row">
           {/* Feed Now Button */}
-          <button className="card feed-now-button" onClick={handleFeedNow}>
+          {/* <button className="card feed-now-button" onClick={handleFeedNow}>
             FEED NOW
-          </button>
+          </button> */}
 
           {/* Refill Level Indicator */}
           <div className="card refill-level-card">
@@ -110,7 +213,7 @@ function App() {
             <div className="refill-progress-bar">
               <div 
                 className={`refill-progress-fill refill-${refillColorStage}`}
-                style={{ width: `${refillLevel}%` }}
+                style={{ width: `${inverseRefillLevel}%` }}
               ></div>
             </div>
           </div>

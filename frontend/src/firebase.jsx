@@ -1,6 +1,5 @@
-import firebase from "firebase";
-
-const firebaseProjectName = "embeded-finalproject-default-rtdb.asia-southeast1";
+import firebase from "firebase/compat/app";
+import "firebase/compat/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAMvydTgXJLog3_H5LAw1o8xnhHP2aTAHQ",
