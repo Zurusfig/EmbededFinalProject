@@ -106,7 +106,10 @@ function App() {
   };
 
   // Calculate inverse refill level (100 - refill_left)
-  const inverseRefillLevel = 100 - refillLevel;
+  // Clamp values to ensure they're between 0 and 100 and handle null/undefined
+  const safeRefillLevel = refillLevel ?? 10;
+  const clampedRefillLevel = Math.max(10, Math.min(100, safeRefillLevel));
+  let inverseRefillLevel = Math.max(10, Math.min(100, 100 - clampedRefillLevel));
 
   // Determine refill level color stage based on inverse (low remaining = red, high remaining = green)
   const getRefillColorStage = (inverseLevel) => {
@@ -118,6 +121,7 @@ function App() {
 
   // Determine water level status
   const getWaterLevelStatus = (level) => {
+    // console.log("waterLevel", level, "%");
     if (level === 0) return 'EMPTY';
     if (level < 25) return 'LOW';
     if (level < 50) return 'OKAY';

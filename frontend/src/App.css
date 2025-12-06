@@ -422,6 +422,10 @@
     font-size: 0.8rem;
     text-wrap: nowrap;
   }
+
+  .header-icon svg {
+    display: none;
+  }
   
   .footer-title {
     font-size: 1.3rem;
