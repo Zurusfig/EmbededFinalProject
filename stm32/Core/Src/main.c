@@ -88,7 +88,7 @@ char uartBuf[50];
 
 float calibration_factor = 1098.3f;
 
-uint32_t tare = 0;
+int32_t tare = 0;
 float knownOriginal = 1;
 float knownHX711 = 1;
 int weight;
@@ -308,6 +308,7 @@ int main(void)
   HAL_GPIO_WritePin(SCK_PORT, SCK_PIN, GPIO_PIN_RESET);
   HAL_Delay(10);
 
+  HAL_Delay(500);
   calibrate_tare();
   HAL_UART_Receive_IT(&huart1,&rx_byte,1);
 
@@ -326,15 +327,48 @@ int main(void)
 	  delay_us(10);
 	  HAL_GPIO_WritePin(GPIOA, TRIG_PIN, GPIO_PIN_RESET);
 
-	  while (HAL_GPIO_ReadPin(GPIOA, ECHO_PIN) == GPIO_PIN_RESET);
+//	  while (HAL_GPIO_ReadPin(GPIOA, ECHO_PIN) == GPIO_PIN_RESET);
+//
+//	  __HAL_TIM_SET_COUNTER(&htim1, 0);
+//
+//	  while (HAL_GPIO_ReadPin(GPIOA, ECHO_PIN) == GPIO_PIN_SET);
+//
+//	  duration = __HAL_TIM_GET_COUNTER(&htim1);
+//
+//	  distance = duration / 58;
 
-	  __HAL_TIM_SET_COUNTER(&htim1, 0);
+	  uint32_t pMillis = HAL_GetTick(); // Get current time
+	        uint8_t sensor_ok = 1;            // Flag to track if sensor is working
 
-	  while (HAL_GPIO_ReadPin(GPIOA, ECHO_PIN) == GPIO_PIN_SET);
+	        // WAIT FOR ECHO START (Timeout: 5ms)
+	        // If the sensor is unplugged, this loop will break after 5ms
+	        while (HAL_GPIO_ReadPin(GPIOA, ECHO_PIN) == GPIO_PIN_RESET) {
+	            if (HAL_GetTick() - pMillis > 5) {
+	                sensor_ok = 0;
+	                break;
+	            }
+	        }
 
-	  duration = __HAL_TIM_GET_COUNTER(&htim1);
+	        if (sensor_ok) {
+	            __HAL_TIM_SET_COUNTER(&htim1, 0); // Reset Timer
+	            pMillis = HAL_GetTick();          // Reset Timeout Counter
 
-	  distance = duration / 58;
+	            // WAIT FOR ECHO END (Timeout: 50ms - max range approx 8m)
+	            while (HAL_GPIO_ReadPin(GPIOA, ECHO_PIN) == GPIO_PIN_SET) {
+	                if (HAL_GetTick() - pMillis > 50) {
+	                    sensor_ok = 0;
+	                    break;
+	                }
+	            }
+	        }
+
+	        if (sensor_ok) {
+	            duration = __HAL_TIM_GET_COUNTER(&htim1);
+	            distance = duration / 58;
+	        } else {
+	            // If unplugged or error, set distance to 0 (or a safe value like 999)
+	            distance = 0;
+	        }
 
 //	  if (distance <= 40) {
 //		  HAL_GPIO_WritePin(GPIOA, LED_PIN, GPIO_PIN_SET);
@@ -357,7 +391,7 @@ int main(void)
 
 	  //}
 
-	  if(weight > 5 && weight < 20){
+	  if((weight > 0 && weight < 20) && distance < 10){
 		  if(isOpen == 0){
 			  Servo_Write(SERVO_OPEN_ANGLE);
 			  openTime = HAL_GetTick();
