@@ -118,17 +118,25 @@ function App() {
     }, 5000);
   };
 
-  // Calculate inverse refill level (100 - refill_left)
-  // Clamp values to ensure they're between 0 and 100 and handle null/undefined
-  const safeRefillLevel = refillLevel ?? 10;
-  const clampedRefillLevel = Math.max(10, Math.min(100, safeRefillLevel));
-  let inverseRefillLevel = Math.max(10, Math.min(100, 100 - clampedRefillLevel));
+  // Treat refillLevel as distance (cm). 10 cm = empty, 2 cm = full.
+  const maxDistanceCm = 10; // empty
+  const minDistanceCm = 3;  // full
+  const distanceCm = refillLevel ?? maxDistanceCm;
+  const span = Math.max(1, maxDistanceCm - minDistanceCm); // avoid divide by zero
+  // Convert distance to fill percentage: distance closer to minDistanceCm => more filled.
+  const fillPercent = Math.max(
+    0,
+    Math.min(
+      100,
+      ((maxDistanceCm - distanceCm) / span) * 100
+    )
+  );
 
-  // Determine refill level color stage based on inverse (low remaining = red, high remaining = green)
-  const getRefillColorStage = (inverseLevel) => {
-    if (inverseLevel <= 25) return 'red';
-    if (inverseLevel <= 50) return 'orange';
-    if (inverseLevel <= 75) return 'yellow';
+  // Determine refill level color stage based on remaining fill (low remaining = red, high remaining = green)
+  const getRefillColorStage = (percent) => {
+    if (percent <= 25) return 'red';
+    if (percent <= 50) return 'orange';
+    if (percent <= 75) return 'yellow';
     return 'green';
   };
 
@@ -142,7 +150,7 @@ function App() {
     return 'FULL';
   };
 
-  const refillColorStage = getRefillColorStage(inverseRefillLevel);
+  const refillColorStage = getRefillColorStage(fillPercent);
   const waterLevelStatus = getWaterLevelStatus(waterLevel);
 
   return (
@@ -234,7 +242,7 @@ function App() {
             <div className="refill-progress-bar">
               <div 
                 className={`refill-progress-fill refill-${refillColorStage}`}
-                style={{ width: `${inverseRefillLevel}%` }}
+                  style={{ width: `${fillPercent}%` }}
               ></div>
             </div>
           </div>
