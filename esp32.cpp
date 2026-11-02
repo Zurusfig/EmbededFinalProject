@@ -5,10 +5,10 @@
 #include "time.h" // ไลบรารีสำหรับดึงเวลา
 
 // --- 1. ตั้งค่า WiFi / Firebase / Time ---
-#define API_KEY "AIzaSyAMvydTgXJLog3_H5LAw1o8xnhHP2aTAHQ"
+#define API_KEY ""
 #define DATABASE_URL "https://embeded-finalproject-default-rtdb.asia-southeast1.firebasedatabase.app/"
-#define SSID "Meee"
-#define PASSWORD "11111111"
+#define SSID ""
+#define PASSWORD ""
 
 // ตั้งค่าเวลา (NTP Server)
 const char* ntpServer = "pool.ntp.org";
